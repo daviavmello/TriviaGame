@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trivia Game</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+</head>
+
+
+
+
+<body>
+    <div class="container">
+        <div class="jumbotron">
+             <h1>Trivia Game</h1>
+            <button class="btn btn-primary" id="start">Start Game</button>
+        </div>
+
+    <h2 id="time"></h2>
+    <div id="game"></div>
+    
+    </div>    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Questions
+            var quizQuestions = [
+                {
+                    question: "Inside which HTML element do we put the JavaScript?",
+                    choices: ["javascript", "js", "scripting", "script"],
+                    correctAnswer: "script"
+                },
+
+                {
+                    question: "How do you write 'Hello World' in an alert box?",
+                    choices: ["msg('Hello World')", "alert('Hello World')", "alertBox('Hello World')", "msgBox('Hello World')"],
+                    correctAnswer: "alert('Hello World')"
+                }
+            ];
+
+
+            var timer;
+            var counter = 5;
+            // currentQuestion is equals the [i]
+            var currentQuestion = 0; 
+            var score = 0;
+            var lost = 0;
+
+
+            // Next question
+            function nextQuestion(){
+                
+                var isQuestionOver = (quizQuestions.length - 1) === currentQuestion;
+                if (isQuestionOver) {
+                    displayResult();
+                    console.log('Game is over!');
+                }
+                else {
+                    currentQuestion++;
+                    loadQuestion();
+                }
+            }
+
+            // function timeUp(){
+            //     clearInterval(timer);
+            //     lost++;
+            //     nextQuestion();
+            // }
+            
+            // Timer
+            function countDown(){
+                counter--;
+                $('#time').html('Time remaining: ' + counter + ' seconds');
+                if (counter === 0) {
+                    displayResult();
+                }
+            }
+
+            // Load questions
+            function loadQuestion() {
+                timer = setInterval(countDown, 1000);
+
+                var question = quizQuestions[currentQuestion].question;
+                var choices = quizQuestions[currentQuestion].choices;
+
+                $('#time').html('Time remaining: ' + counter + ' seconds');
+                $('#game').html(`
+                    <h4>${question}</h4>
+                    ${loadChoices(choices)}
+                `);
+                console.log(loadChoices(choices));
+            }
+
+            // Display choices
+            function loadChoices(choices) {
+                var result = '';
+
+                for (var i = 0; i < choices.length; i++) {                   
+                result +=`<p class="choice" data-answer="${choices[i]}">${choices[i]} </p>`;
+
+                }
+                return result;
+                console.log(result);
+
+            }
+
+            // Logic for choices on click
+            $(document).on('click', '.choice', function() {
+                clearInterval(timer);
+                var selectedAnswer = $(this).attr('data-answer');
+                var correctAnswer = quizQuestions[currentQuestion].correctAnswer;
+
+                if (correctAnswer === selectedAnswer) {
+                    score++;
+                    nextQuestion();
+                    console.log('Winnnn');
+                }
+                else {
+                    lost++;
+                    nextQuestion();
+                    console.log('Lost dummie');
+                }
+            
+            });
+            
+            // Display results
+            function displayResult() {
+                clearInterval(timer);
+                var result = `
+                <p> Total questions: ${quizQuestions.length} </p>
+                <p> You got ${score} questions right </p>
+                <p> You missed ${lost} questions </p>
+                <button class="btn btn-primary" id="reset"> Reset Game </button>
+                `;
+
+                $('#game').html(result);
+            }
+
+            // Reset Button
+            $(document).on('click', '#reset', function() {
+                counter = 5;
+                currentQuestion = 0;
+                score = 0;
+                lost = 0;
+                timer = null;
+
+                loadQuestion();
+            });
+            
+            // Start Game Button
+            $('#start').on ('click', function() {
+                $('#start').remove();
+                $('#time').html(counter);
+                loadQuestion();
+            });
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+.choice {
+    padding: 10px 0 10px 10px;
+    border: 1px solid #dddddd;
+    margin: 20px 0;
+}
+.choice:hover {
+    background-color: #007AFF;
+    color: #ffffff;
+    border: none;
+}
+    
